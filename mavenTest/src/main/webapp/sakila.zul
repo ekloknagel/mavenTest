@@ -1,0 +1,125 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<?link rel="stylesheet" type="text/css" href="resources/css/style.css"?>
+
+
+<zk>
+
+
+
+
+	<script defer="true"> <![CDATA[
+
+        jq("button").hide().fadeIn(1500);
+        jq("$lb").hide().slideDown(1500);
+        
+        
+        
+        jq("$btn").click(function() {
+        
+        jq("$lb").toggleClass("lbGrey");
+        jq("$lb").toggleClass("lbYellow");   
+        });
+       	]]>
+	</script>
+
+
+
+
+
+
+	
+	<window contentStyle="overflow:auto" vflex="1"
+		title="Sakila Datenbank" border="none"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('ActorDB.ActorVM')">
+		<zscript>
+
+
+
+public void change() {
+if(lb.getSclass().contains("lbGrey")){
+	lb.setSclass(lb.getSclass().replace("lbGrey","").trim()+ " lbYellow");
+
+}else{
+	lb.setSclass(lb.getSclass().replace("lbYellow","").trim()+ " lbGrey");
+}
+
+}
+
+</zscript>
+
+
+		<hlayout hflex="1">
+			<button class="pressedEffect" hflex="1" style="opacity: 0.6;"
+				label="Schauspieler hinzufügen" onClick="@command('createNewActor')" />
+			<button class="pressedEffect" hflex="1" style="opacity: 0.6;"
+				label="Schauspieler löschen" />
+			<button class="pressedEffect" hflex="1" style="opacity: 0.6;"
+				label="Farbschema" />
+
+		</hlayout>
+
+		<listbox class="lbYellow" hflex="1" id="lb" mold="paging"
+			rows="12" pageSize="12" autopaging="true" model="@bind(vm.al)"
+			selectedItem="@bind(vm.selectedActor)">
+			<listhead>
+				<listheader hflex="min" label="ID" />
+				<listheader label="Vorname" />
+				<listheader label="Nachname" />
+				<listheader label="letztes Update">
+					<button id="btn" label="Farbschema" class="glowBtn" />
+					<button label="bt" onClick="change();"></button>
+				</listheader>
+			</listhead>
+
+			<template name="model" var="actor">
+				<listitem>
+					<listcell label="@bind(actor.actor_id)" />
+					<listcell>
+						<textbox inplace="true" value="@bind(actor.first_name)" />
+					</listcell>
+					<listcell>
+						<textbox inplace="true" value="@bind(actor.last_name)" />
+					</listcell>
+					<listcell>
+						<textbox inplace="true"
+							value="@bind(actor.last_update) @converter('formatedDate', format='dd.MM.yyyy')" />
+					</listcell>
+				</listitem>
+			</template>
+		</listbox>
+
+		<hlayout vflex="min" hflex="1">
+			<textbox hflex="1" value="@bind(vm.selectedActor.first_name)"
+				disabled="@bind(vm.selectedActor eq null)" />
+			<textbox hflex="1" value="@bind(vm.selectedActor.last_name)"
+				disabled="@bind(vm.selectedActor eq null)" />
+			<datebox hflex="1"
+				value="@bind(vm.selectedActor.last_update)"
+				disbled="@bind(vm.selectedActor eq null)" />
+
+		</hlayout>
+
+		<separator spacing="60px" />
+
+		<listbox class="lbYellow" model="@bind(vm.cl)" height="500px">
+			<listhead>
+				<listheader sort="auto(first_name)" label="Vorname" />
+				<listheader sort="auto(last_name)" label="Nachname" />
+				<listheader sort="auto(email)" label="Email-Adresse" />
+			</listhead>
+
+			<template name="model" var="customer">
+				<listitem>
+					<listcell label="@bind(customer.first_name)" />
+					<listcell label="@bind(customer.last_name)" />
+					<listcell label="@bind(customer.email) " />
+				</listitem>
+			</template>
+		</listbox>
+
+
+
+
+	</window>
+</zk>
